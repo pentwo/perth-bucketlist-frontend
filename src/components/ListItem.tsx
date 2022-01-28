@@ -1,58 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-type itemObj = {
-  title: string
-  description: string
-  done: boolean
-}
+import { itemObj } from './List'
+
 type Props = {
   item: itemObj
 }
 
 const ListItem = (props: Props) => {
+  const [done, setDone]: [boolean, Function] = useState(false)
+
   return (
-    // <div>
-    //   <h3>{props.title}</h3>
-    //   <p>A hoverable card.</p>
-    // </div>
-    <label
-      htmlFor="input1"
-      className="p-4 flex justify-between items-center shadow rounded cursor-pointer border border-transparent hover:border-blue-500 active:bg-gray-50 bg-white mb-3 sm:mb-7"
-    >
-      <div className="flex items-center">
-        <input id="input1" type="checkbox" className="mr-4" />
-        <div className="mr-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-500"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
-          </svg>
-        </div>
-        <p className="select-none">
-          {props.item.title}{' '}
-          <span className="text-grey text-xs">{props.item.description}</span>
-        </p>
+    <div className=" border border-gray-200 rounded-xl bg-white w-1/4 hover:bg-gray-50 active:bg-gray-100 m-2">
+      <div className="flex justify-center items-center text-gray-500">
+        <img
+          className="rounded-t-xl"
+          src="https://picsum.photos/360/360"
+          alt="placeholder"
+        />
       </div>
-      <button className="text-gray-500 hover:text-gray-800">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <div className="p-4 text-center mt-4">
+        <label
+          htmlFor="input1"
+          className=" flex justify-center items-center cursor-pointer"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-          />
-        </svg>
-      </button>
-    </label>
+          <div className="flex items-center">
+            <input
+              id="input1"
+              type="checkbox"
+              className="mr-4"
+              checked={done}
+              onChange={() => setDone(!done)}
+            />
+            <p className="font-bold text-gray-700 text select-none">
+              {props.item.name}
+            </p>
+          </div>
+        </label>
+        <p className="text-500 text-sm mt-4">{props.item.description}</p>
+      </div>
+    </div>
   )
 }
 export default ListItem
