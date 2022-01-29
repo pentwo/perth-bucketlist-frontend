@@ -1,31 +1,29 @@
 import React, { useState } from 'react'
 
-import { itemObj } from './List'
+import { ItemObj } from './ListCards'
 
 type Props = {
-  item: itemObj
+  item: ItemObj
 }
 
-const ListItem = (props: Props) => {
+const ItemCard = (props: Props) => {
   const [done, setDone]: [boolean, Function] = useState(false)
 
   return (
-    <div className="w-1/3 rounded-xl  ">
-      <div className="p-4 border border-gray-200  bg-white  hover:bg-gray-200 active:bg-gray-100 m-2">
-        <div className="flex justify-center items-center text-gray-500">
+    <div className="w-1/3 ">
+      <div className="p-4 shadow-lg border border-gray-200  bg-white  hover:bg-gray-100 active:bg-gray-100 m-2">
+        <figure className="flex flex-col justify-center items-center text-gray-500">
           <img
-            className="rounded-xl"
-            src="https://picsum.photos/360/360"
+            className="rounded-sm object-cover h-80 w-80"
+            src={props.item.placeImg}
             alt="placeholder"
           />
-        </div>
+          <figcaption>{props.item.location}</figcaption>
+        </figure>
       </div>
-      <div className="p-4  mt-4">
-        <label
-          htmlFor={`list-${props.item.id}`}
-          className=" flex justify-between items-center cursor-pointer"
-        >
-          <h3 className="font-bold text-gray-700 text ">{props.item.name}</h3>
+      <div className="p-4 flex justify-between items-center">
+        <h3 className="font-bold text-gray-700 text ">{props.item.name}</h3>
+        <label htmlFor={`list-${props.item.id}`} className="  cursor-pointer">
           <input
             id={`list-${props.item.id}`}
             type="checkbox"
@@ -33,7 +31,7 @@ const ListItem = (props: Props) => {
             checked={done}
             onChange={() => setDone(!done)}
           />
-          <div className="w-8 h-8 flex flex-shrink-0 justify-center items-center mr-2">
+          <div className="w-8 h-8 flex flex-shrink-0 justify-center items-center mx-2">
             <svg
               className=""
               width="36"
@@ -80,11 +78,11 @@ const ListItem = (props: Props) => {
             </svg>
           </div>
         </label>
-        <p className="text-500 text-sm mt-4">
+        {/* <p className="text-500 text-sm mt-4">
           {`${props.item.description.substring(0, 150)} ...Read more`}
-        </p>
-      </div>{' '}
+        </p> */}
+      </div>
     </div>
   )
 }
-export default ListItem
+export default ItemCard
