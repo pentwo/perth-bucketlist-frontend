@@ -3,6 +3,8 @@ import ListItem from './ListItem'
 
 // const END_POINT: string | URL = new URL(process.env.REACT_APP_API_ENDPOINT)
 
+const QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
+
 type Props = {}
 
 export type itemObj = {
@@ -17,9 +19,8 @@ type apiResult = {}
 
 const item: itemObj = {
   id: 0,
-  name: 'This is the title',
-  description:
-    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates officia totam rerum odit voluptatum amet laboriosam, sed ea veritatis facere voluptate voluptatem fugiat, corrupti nostrum fugit nisi? Quod, explicabo quam.'
+  name: '',
+  description: ''
   // done: false,
   // imgUrl: 'https://picsum.photos/360/360'
 }
@@ -29,10 +30,10 @@ const fetchItem = async (endPoint: RequestInfo) => {
 }
 
 async function request<TResponse>(
-  url: string,
+  url: string | URL,
   config: RequestInit
 ): Promise<Array<Array<itemObj | any>>> {
-  const response = await fetch(url, config)
+  const response = await fetch(url.toString(), config)
   return await response.json()
 }
 
@@ -40,7 +41,10 @@ const List = (props: Props) => {
   const [items, setItems]: [Array<itemObj>, Function] = useState([item])
 
   useEffect(() => {
-    request('http://localhost:4000/bucket', {}).then(data => {
+    const url = new URL('http://localhost:4000/bucket')
+    url.searchParams.append('limit', QUERY_LIMIT)
+    // url.searchParams.append('offset', '0')
+    request(url, {}).then(data => {
       if (typeof data === 'object' && data !== null) {
         const result: Array<itemObj> = [...data[0]]
 
