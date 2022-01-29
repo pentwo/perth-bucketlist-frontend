@@ -1,7 +1,10 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    fontFamily: {
+      handwriting: ['Mali', 'cursive']
+    },
     extend: {}
   },
-  plugins: [require('tw-elements/dist/plugin')]
+  plugins: []
 }
