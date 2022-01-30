@@ -9,10 +9,6 @@ input:checked + div svg:nth-child(1) {
   @apply hidden;
 }
 
-figcaption {
-  @apply font-handwriting;
-}
-
 .flipY {
   transform: rotateY(-180deg);
 }
