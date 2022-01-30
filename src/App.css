@@ -12,3 +12,20 @@ input:checked + div svg:nth-child(1) {
 figcaption {
   @apply font-handwriting;
 }
+
+.flipY {
+  transform: rotateY(-180deg);
+}
+
+.front {
+  transform: rotateY(180deg);
+}
+.front.faceup {
+  transform: rotateY(0deg);
+}
+.back {
+  transform: rotateY(-180deg);
+}
+.back.faceup {
+  transform: rotateY(0deg);
+}
