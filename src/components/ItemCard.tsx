@@ -24,20 +24,20 @@ const ItemCard = (props: Props) => {
           })
         }}
       >
-        <div className="absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200 ">
-          <figure className="flex flex-col justify-center items-center text-gray-500 ">
+        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
+          <p className="text-500 text-sm">{`${props.item.description}`}</p>
+        </div>
+        <div className="absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200">
+          <figure className="flex flex-col justify-center items-center text-gray-800 ">
             <img
               className="rounded-sm object-cover h-80 w-80"
               src={props.item.placeImg}
-              alt="placeholder"
+              alt={props.item.name}
             />
             <figcaption className="text-base font-handwriting p-1 -skew-x-6 -rotate-6 bg-indigo-200 -translate-y-3">
               {props.item.location}
             </figcaption>
           </figure>
-        </div>
-        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
-          <p className="text-500 text-sm">{`${props.item.description}`}</p>
         </div>
       </div>
       <div className=" p-4 flex justify-between items-center">
