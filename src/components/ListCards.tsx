@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+
 import ItemCard from './ItemCard'
 
-// const END_POINT: string | URL = new URL(process.env.REACT_APP_API_ENDPOINT)
-
-const QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
+let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
+const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
 
 type Props = {}
 
@@ -27,36 +27,55 @@ const item: ItemObj = {
   // imgUrl: 'https://picsum.photos/360/360'
 }
 
-async function getBucketItems<Array>(
-  url: string | URL,
-  config: RequestInit
-): Promise<Array> {
-  const response = await fetch(url.toString(), config)
-  return await response.json()
+function isBottom(ref: React.RefObject<HTMLDivElement>) {
+  if (!ref.current) {
+    return false
+  }
+  return ref.current.getBoundingClientRect().bottom <= window.innerHeight
 }
-
 const ListCards = (props: Props) => {
-  const [Cards, setCards]: [Array<ItemObj>, Function] = useState([item])
+  const [cards, setCards]: [Array<ItemObj>, Function] = useState([item])
+  const [loading, setLoading] = useState(true)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  const hasMoreData = parseInt(QUERY_LIMIT) < 50
+
+  async function getBucketItems() {
+    const response = await fetch(`${API_ENDPOINT}?limit=${QUERY_LIMIT}`)
+    const data = await response.json()
+    const result = [...data]
+
+    if (hasMoreData) {
+      QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
+    }
+    setLoading(false)
+    setCards(result)
+  }
+  useEffect(() => {
+    getBucketItems()
+  })
 
   useEffect(() => {
-    const url = new URL('http://localhost:4000/bucket')
-    url.searchParams.append('limit', QUERY_LIMIT)
-    // url.searchParams.append('offset', '0')
-    getBucketItems<Array<ItemObj>>(url, {}).then(data => {
-      // if (typeof data === 'array' && data !== null) {
-      const result: Array<ItemObj> = [...data]
-
-      setCards(result)
-      // }
-    })
-  }, [])
+    const onScroll = () => {
+      if (isBottom(contentRef)) {
+        getBucketItems()
+      }
+    }
+    document.addEventListener('scroll', onScroll)
+    return () => document.removeEventListener('scroll', onScroll)
+  })
 
   return (
     <div className="flex flex-col">
-      <div className="container flex flex-wrap justify-between mx-auto my-2 md:my-4">
-        {Cards.map(i => {
-          return <ItemCard item={i} />
-        })}
+      <div
+        className="container flex flex-wrap justify-center sm:justify-start mx-auto my-2 md:my-4"
+        ref={contentRef}
+      >
+        {loading
+          ? 'Loading...'
+          : cards.map(i => {
+              return <ItemCard item={i} key={i.id} />
+            })}
       </div>
     </div>
   )
