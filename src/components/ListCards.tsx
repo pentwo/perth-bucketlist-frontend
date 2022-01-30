@@ -36,7 +36,7 @@ async function getBucketItems<Array>(
 }
 
 const ListCards = (props: Props) => {
-  const [items, setItems]: [Array<ItemObj>, Function] = useState([item])
+  const [Cards, setCards]: [Array<ItemObj>, Function] = useState([item])
 
   useEffect(() => {
     const url = new URL('http://localhost:4000/bucket')
@@ -46,15 +46,15 @@ const ListCards = (props: Props) => {
       // if (typeof data === 'array' && data !== null) {
       const result: Array<ItemObj> = [...data]
 
-      setItems(result)
+      setCards(result)
       // }
     })
   }, [])
 
   return (
     <div className="flex flex-col">
-      <div className="container flex flex-wrap justify-between mx-auto my-6 md:my-12">
-        {items.map(i => {
+      <div className="container flex flex-wrap justify-between mx-auto my-2 md:my-4">
+        {Cards.map(i => {
           return <ItemCard item={i} />
         })}
       </div>
