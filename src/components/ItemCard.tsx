@@ -12,26 +12,19 @@ const ItemCard = (props: Props) => {
   return (
     <div className="sm:w-1/2 lg:w-1/3 ">
       <div
-        className="photo-card relative h-96 flex transition-all duration-200 bg-white hover:bg-slate-100 active:bg-gray-100
-        m-2"
+        className="photo-card relative h-96 flex transition-all duration-200 bg-white active:bg-gray-100 m-2"
         onClick={e => {
           // handle flip animate
           const ele = e.currentTarget as HTMLDivElement
           ele.childNodes.forEach(node => {
             const ele = node as HTMLDivElement
-            if (ele.classList.contains('opacity-0')) {
-              ele.classList.add('opacity-100')
-              ele.classList.remove('opacity-0')
-              ele.classList.toggle('faceup')
-            } else if (ele.classList.contains('opacity-100')) {
-              ele.classList.add('opacity-0')
-              ele.classList.remove('opacity-100')
-              ele.classList.toggle('faceup')
-            }
+            ele.classList.toggle('opacity-0')
+            ele.classList.toggle('opacity-100')
+            ele.classList.toggle('faceup')
           })
         }}
       >
-        <div className="absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-4 border-gray-200 ">
+        <div className="absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200 ">
           <figure className="flex flex-col justify-center items-center text-gray-500">
             <img
               className="rounded-sm object-cover h-80 w-80"
@@ -41,9 +34,8 @@ const ItemCard = (props: Props) => {
             <figcaption>{props.item.location}</figcaption>
           </figure>
         </div>
-        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-4 border-gray-200 overflow-auto">
+        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
           <p className="text-500 text-sm">{`${props.item.description}`}</p>
-          <button>Link</button>
         </div>
       </div>
       <div className=" p-4 flex justify-between items-center">
