@@ -13,15 +13,30 @@ input:checked + div svg:nth-child(1) {
   transform: rotateY(-180deg);
 }
 
+.front.faceup {
+  transform: rotateY(0deg);
+}
 .front {
   transform: rotateY(180deg);
 }
-.front.faceup {
-  transform: rotateY(0deg);
+.front.faceup:hover {
+  /* animation: flipping 3s cubic-bezier(0.4, 0, 0.2, 1) infinite; */
 }
 .back {
   transform: rotateY(-180deg);
 }
 .back.faceup {
   transform: rotateY(0deg);
+}
+
+@keyframes flipping {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(-20deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
 }
