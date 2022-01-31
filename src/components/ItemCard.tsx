@@ -1,54 +1,68 @@
 import React, { useState } from 'react'
 
-import { ItemObj } from './ListCards'
+import { ItemObj } from '../App'
 
 type Props = {
   item: ItemObj
+  addItemToList: (id: number) => void
 }
+// TODO: Button function
 
-const ItemCard = (props: Props) => {
+const ItemCard = ({ addItemToList, item }: Props) => {
   const [done, setDone]: [boolean, Function] = useState(false)
+
+  const onHandleFlip = (e: React.MouseEvent) => {
+    // handle flip animate
+    const ele = e.currentTarget as HTMLDivElement
+    ele.childNodes.forEach(node => {
+      const ele = node as HTMLDivElement
+      ele.classList.toggle('opacity-0')
+      ele.classList.toggle('opacity-100')
+      ele.classList.toggle('faceup')
+    })
+  }
 
   return (
     <div className="sm:w-1/2 lg:w-1/3 ">
       <div
-        className="photo-card relative h-96 flex transition-all duration-200 bg-white active:bg-gray-100 m-2"
-        onClick={e => {
-          // handle flip animate
-          const ele = e.currentTarget as HTMLDivElement
-          ele.childNodes.forEach(node => {
-            const ele = node as HTMLDivElement
-            ele.classList.toggle('opacity-0')
-            ele.classList.toggle('opacity-100')
-            ele.classList.toggle('faceup')
-          })
-        }}
+        className={`photo-card relative h-96 flex transition-all duration-200 bg-white active:bg-gray-100 m-2`}
+        onClick={onHandleFlip}
       >
-        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
-          <p className="text-500 text-sm">{`${props.item.description}`}</p>
-        </div>
-        <div className="absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200">
+        <div
+          className={`absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200 ${
+            done ? 'bg-pink-200' : ''
+          }`}
+        >
           <figure className="flex flex-col justify-center items-center text-gray-800 ">
             <img
               className="rounded-sm object-cover h-80 w-80"
-              src={props.item.placeImg}
-              alt={props.item.name}
+              src={item.placeImg}
+              alt={item.name}
             />
             <figcaption className="text-base font-handwriting p-1 -skew-x-6 -rotate-6 bg-indigo-200 -translate-y-3">
-              {props.item.location}
+              {item.location}
             </figcaption>
           </figure>
         </div>
+        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
+          <p className="text-500 text-sm">{`${item.description}`}</p>
+        </div>
       </div>
-      <div className=" p-4 flex justify-between items-center">
-        <h3 className="font-bold text-gray-700 text ">{props.item.name}</h3>
-        <label htmlFor={`list-${props.item.id}`} className="  cursor-pointer">
+      <div className=" p-4">
+        <label
+          htmlFor={`list-${item.id}`}
+          className="flex flex-row justify-between items-center cursor-pointer"
+        >
+          <h3 className="font-bold text-gray-700 text ">{item.name}</h3>
           <input
-            id={`list-${props.item.id}`}
+            id={`list-${item.id}`}
             type="checkbox"
             className="mr-4 hidden"
             checked={done}
-            onChange={() => setDone(!done)}
+            onChange={() => {
+              setDone(!done)
+              addItemToList(item.id)
+            }}
           />
           <div className="w-8 h-8 flex justify-center items-center mx-2">
             <svg

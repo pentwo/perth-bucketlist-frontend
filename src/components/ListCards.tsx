@@ -1,61 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react'
-
 import ItemCard from './ItemCard'
 import { isBottom } from '../utility/tools'
+import { ItemObj } from '../App'
 
-let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
-
-const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
-
-type Props = {}
-
-export type ItemObj = {
-  id: number
-  name: string
-  description: string
-  placeImg: string
-  location: string
-  // done: boolean
-  // imgUrl: string
+type Props = {
+  getBucketItems: (setLoading: Function) => Promise<void>
+  cards: Array<ItemObj>
+  addItemToList: (id: number) => void
 }
 
-const item: ItemObj = {
-  id: 0,
-  name: '',
-  description: '',
-  placeImg: '',
-  location: ''
-  // done: false,
-  // imgUrl: 'https://picsum.photos/360/360'
-}
-
-const ListCards = (props: Props) => {
-  const [cards, setCards] = useState([item])
+const ListCards = ({ getBucketItems, cards, addItemToList }: Props) => {
   const [loading, setLoading] = useState(true)
   const contentRef = useRef<HTMLDivElement>(null)
 
-  const hasMoreData = parseInt(QUERY_LIMIT) < 50
-
-  async function getBucketItems() {
-    const response = await fetch(`${API_ENDPOINT}?limit=${QUERY_LIMIT}`)
-    const data = await response.json()
-    const result = [...data]
-
-    if (hasMoreData) {
-      QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
-    }
-    setLoading(false)
-    setCards(result)
-  }
-
   useEffect(() => {
-    getBucketItems()
+    getBucketItems(setLoading)
   }, [])
 
   useEffect(() => {
     const onScroll = () => {
       if (isBottom(contentRef)) {
-        getBucketItems()
+        getBucketItems(setLoading)
       }
     }
     document.addEventListener('scroll', onScroll)
@@ -71,7 +36,9 @@ const ListCards = (props: Props) => {
         {loading
           ? ''
           : cards.map(i => {
-              return <ItemCard item={i} key={i.id} />
+              return (
+                <ItemCard item={i} key={i.id} addItemToList={addItemToList} />
+              )
             })}
         {loading ? (
           <svg
