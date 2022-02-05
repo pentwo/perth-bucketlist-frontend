@@ -6,15 +6,14 @@ type Props = {
   item: ItemObj
   addItemToList: (id: number) => void
 }
-// TODO: Button function
 
 const ItemCard = ({ addItemToList, item }: Props) => {
   const [done, setDone]: [boolean, Function] = useState(false)
+  const [faceUp, setFaceUp] = useState(true)
 
   const onHandleFlip = (e: React.MouseEvent) => {
     // handle flip animate
-    const ele = e.currentTarget as HTMLDivElement
-    ele.childNodes.forEach(node => {
+    e.currentTarget.childNodes.forEach(node => {
       const ele = node as HTMLDivElement
       ele.classList.toggle('opacity-0')
       ele.classList.toggle('opacity-100')
@@ -24,15 +23,34 @@ const ItemCard = ({ addItemToList, item }: Props) => {
 
   return (
     <div className="sm:w-1/2 lg:w-1/3 ">
+      {/* {console.log('re-render:', item.name)} */}
       <div
-        className={`photo-card relative h-96 flex transition-all duration-200 bg-white active:bg-gray-100 m-2`}
+        className={`photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer ${
+          done ? 'bg-pink-200' : ''
+        }}`}
         onClick={onHandleFlip}
       >
         <div
-          className={`absolute front p-4 h-full opacity-100 transition-all duration-1000 faceup border-2 border-gray-200 ${
-            done ? 'bg-pink-200' : ''
-          }`}
+          className={`absolute front faceup p-4 h-full opacity-100 transition-all duration-1000  border-2 border-gray-200`}
         >
+          {done ? (
+            <div className="absolute inset-0 flex justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-32 w-32 fill-indigo-700"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          ) : (
+            ''
+          )}
           <figure className="flex flex-col justify-center items-center text-gray-800 ">
             <img
               className="rounded-sm object-cover h-80 w-80"
@@ -44,7 +62,9 @@ const ItemCard = ({ addItemToList, item }: Props) => {
             </figcaption>
           </figure>
         </div>
-        <div className="absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto">
+        <div
+          className={`absolute back p-4 h-full opacity-0 transition-all duration-1000 border-2 border-gray-200 overflow-y-auto`}
+        >
           <p className="text-500 text-sm">{`${item.description}`}</p>
         </div>
       </div>

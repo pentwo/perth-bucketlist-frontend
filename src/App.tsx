@@ -1,10 +1,9 @@
-import { useState, createContext } from 'react'
+import { useState, createContext, useMemo } from 'react'
 import './App.css'
 import Bucket from './components/Bucket'
 import Hero from './components/Hero'
 import ListCards from './components/ListCards'
 
-let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
 const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
 
 export interface MyListInterface {
@@ -34,7 +33,8 @@ const item: ItemObj = {
 function App() {
   const [cards, setCards] = useState([item])
   const [myList, setMyList]: [number[], Function] = useState([])
-  const hasMoreData = parseInt(QUERY_LIMIT) < 50
+  let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
+  let OFFSET = 0
 
   function addItemToList(id: number) {
     setMyList((myList: number[]) => {
@@ -54,9 +54,32 @@ function App() {
     if (parseInt(QUERY_LIMIT) < 50) {
       QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
     }
+
     setLoading(false)
     setCards(result)
   }
+
+  async function getMoreBucketItems(setLoading: Function) {
+    OFFSET += parseInt(QUERY_LIMIT, 10)
+    const response = await fetch(
+      `${API_ENDPOINT}?limit=${QUERY_LIMIT}&offset=${OFFSET}`
+    )
+    const data = await response.json()
+    const result = [...data]
+
+    if (parseInt(QUERY_LIMIT) < 50) {
+      QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
+    }
+
+    setLoading(false)
+    setCards(cards => {
+      return [...cards, ...result]
+    })
+  }
+
+  const cardsMemoed = useMemo(() => {
+    return cards
+  }, [cards])
 
   return (
     // <MyListCtx.Provider value={sampleCtx}>
@@ -65,12 +88,12 @@ function App() {
         <Hero />
       </header>
       <aside className="row-start-1 row-span-2 grid-cols-1">
-        <Bucket cards={cards} myListState={myList} setMyListFunc={setMyList} />
+        <Bucket cards={cardsMemoed} myList={myList} setMyListFunc={setMyList} />
       </aside>
       <main className="col-start-2 col-span-4">
         <ListCards
           getBucketItems={getBucketItems}
-          cards={cards}
+          cards={cardsMemoed}
           addItemToList={addItemToList}
         />
       </main>

@@ -11,12 +11,20 @@ type Props = {
 
 const ListCards = ({ getBucketItems, cards, addItemToList }: Props) => {
   const [loading, setLoading] = useState(true)
+  const [filterCards, setFilterCards] = useState<ItemObj[]>([])
   const contentRef = useRef<HTMLDivElement>(null)
 
+  // initial fetching data
   useEffect(() => {
     getBucketItems(setLoading)
   }, [])
 
+  // set current showing
+  useEffect(() => {
+    setFilterCards([...cards])
+  }, [])
+
+  // infinate scrolling
   useEffect(() => {
     const onScroll = () => {
       if (isBottom(contentRef)) {
