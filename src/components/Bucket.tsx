@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import MyListInterface from '../App'
 import { ItemObj } from '../App'
 
@@ -12,7 +12,8 @@ export default function Bucket({ myList, cards }: Props) {
   const [title, setTitle] = useState('My List')
 
   return (
-    <div className="sticky top-4 m-4 mb-0 p-2 border-2 shadow-lg h-[calc(100vh-32px)] shadow-blue-100 overflow-y-auto">
+    <div className="sticky top-4 m-4 mb-0 p-2 border-2 shadow-lg h-[calc(100vh-32px)] shadow-blue-100 flex flex-col">
+      {/* Title */}
       <div className="list-title text-xl mb-4">
         <input
           className="w-full mb-2"
@@ -23,7 +24,9 @@ export default function Bucket({ myList, cards }: Props) {
           }}
         />
       </div>
-      <ul>
+
+      {/* Bucket list */}
+      <ul className="mb-16 overflow-y-auto">
         {myList.length === 0 ? (
           <p>Add item to start...</p>
         ) : (
@@ -39,6 +42,8 @@ export default function Bucket({ myList, cards }: Props) {
           })
         )}
       </ul>
+
+      {/* buttons */}
       <div className="absolute bottom-4 flex">
         <button className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md">
           <svg
