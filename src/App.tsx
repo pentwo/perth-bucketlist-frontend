@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import './App.css'
 import Bucket from './components/Bucket'
 import Filter from './components/Filter'
@@ -19,6 +20,9 @@ export type ItemObj = {
   location: string
   firstTag: string
   // imgUrl: string
+}
+type routerParams = {
+  id: string
 }
 
 const initItem: ItemObj = {
@@ -41,6 +45,15 @@ function App() {
   let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
   let OFFSET = 0
 
+  let { id } = useParams<routerParams>()
+
+  useEffect(() => {
+    if (id) {
+      readSavedList(id)
+    } else {
+    }
+  }, [])
+
   function addItemToList(id: number) {
     setMyList((myList: number[]) => {
       if (!myList.includes(id)) {
@@ -49,6 +62,21 @@ function App() {
         return myList.filter(item => item !== id)
       }
     })
+  }
+
+  async function readSavedList(id: string) {
+    try {
+      const response = await fetch(`${API_ENDPOINT}/${id}`)
+      const data = await response.json()
+      // console.log('data: ', data)
+      const { list } = data[0]
+
+      JSON.parse(list).forEach((item: number) => {
+        addItemToList(item)
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   async function getBucketItems(setLoading: Function) {
