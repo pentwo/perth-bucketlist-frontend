@@ -6,22 +6,17 @@ import { ItemObj } from '../App'
 type Props = {
   getBucketItems: (setLoading: Function) => Promise<void>
   cards: Array<ItemObj>
+  myList: Number[]
   addItemToList: (id: number) => void
 }
 
-const ListCards = ({ getBucketItems, cards, addItemToList }: Props) => {
+const ListCards = ({ getBucketItems, cards, myList, addItemToList }: Props) => {
   const [loading, setLoading] = useState(true)
-  const [filterCards, setFilterCards] = useState<ItemObj[]>([])
   const contentRef = useRef<HTMLDivElement>(null)
 
   // initial fetching data
   useEffect(() => {
     getBucketItems(setLoading)
-  }, [])
-
-  // set current showing
-  useEffect(() => {
-    setFilterCards([...cards])
   }, [])
 
   // infinate scrolling
@@ -45,7 +40,12 @@ const ListCards = ({ getBucketItems, cards, addItemToList }: Props) => {
           ? ''
           : cards.map(i => {
               return (
-                <ItemCard item={i} key={i.id} addItemToList={addItemToList} />
+                <ItemCard
+                  done={myList.includes(i.id)}
+                  item={i}
+                  key={`card-${i.id}`}
+                  addItemToList={addItemToList}
+                />
               )
             })}
         {loading ? (

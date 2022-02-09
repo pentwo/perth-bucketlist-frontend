@@ -1,6 +1,7 @@
-import { useState, createContext, useMemo } from 'react'
+import { useState } from 'react'
 import './App.css'
 import Bucket from './components/Bucket'
+import Filter from './components/Filter'
 import Hero from './components/Hero'
 import ListCards from './components/ListCards'
 
@@ -16,23 +17,27 @@ export type ItemObj = {
   description: string
   placeImg: string
   location: string
-  // done: boolean
+  firstTag: string
   // imgUrl: string
 }
 
-const item: ItemObj = {
+const initItem: ItemObj = {
   id: 0,
   name: '',
   description: '',
   placeImg: '',
-  location: ''
+  location: '',
+  firstTag: ''
   // done: false,
   // imgUrl: 'https://picsum.photos/360/360'
 }
 
 function App() {
-  const [cards, setCards] = useState([item])
+  const [cards, setCards] = useState([initItem])
   const [myList, setMyList]: [number[], Function] = useState([])
+  const [filterCards, setFilterCards] = useState<ItemObj[]>([])
+  const [filtered, setFiltered] = useState('')
+
   let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
   let OFFSET = 0
 
@@ -72,30 +77,55 @@ function App() {
     }
 
     setLoading(false)
-    setCards(cards => {
-      return [...cards, ...result]
-    })
+    if (cards.length > 0) {
+      setCards(cards => {
+        return [...cards, ...result]
+      })
+    }
   }
 
-  const cardsMemoed = useMemo(() => {
-    return cards
-  }, [cards])
+  const handleFilter = (e: React.MouseEvent) => {
+    const tag: string = e.currentTarget?.id
+
+    if (tag === '' || filtered === tag) {
+      setFiltered('')
+      setFilterCards([])
+    } else {
+      setFiltered(tag)
+
+      const result = cards.filter(card => {
+        return card.firstTag === tag
+      })
+      setFilterCards([...result])
+    }
+  }
 
   return (
     // <MyListCtx.Provider value={sampleCtx}>
-    <div className="App grid grid-row-2 grid-cols-5">
+    <div className="App grid grid-rows-[200px_1fr] grid-cols-5 content-start">
       <header className="col-start-2 col-span-4">
         <Hero />
       </header>
       <aside className="row-start-1 row-span-2 grid-cols-1">
-        <Bucket cards={cardsMemoed} myList={myList} setMyListFunc={setMyList} />
+        <Bucket cards={cards} myList={myList} setMyListFunc={setMyList} />
       </aside>
-      <main className="col-start-2 col-span-4">
-        <ListCards
-          getBucketItems={getBucketItems}
-          cards={cardsMemoed}
-          addItemToList={addItemToList}
-        />
+      <main className="col-start-2 col-span-4 ">
+        <Filter handleFilter={handleFilter} filtered={filtered} />
+        {filterCards.length > 0 || filtered ? (
+          <ListCards
+            myList={myList}
+            getBucketItems={getBucketItems}
+            cards={filterCards}
+            addItemToList={addItemToList}
+          />
+        ) : (
+          <ListCards
+            myList={myList}
+            getBucketItems={getBucketItems}
+            cards={cards}
+            addItemToList={addItemToList}
+          />
+        )}
       </main>
     </div>
     // </MyListCtx.Provider>
