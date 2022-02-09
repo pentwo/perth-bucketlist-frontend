@@ -1,12 +1,13 @@
 input:checked + div {
-  @apply border-blue-500;
+}
+input:checked + div svg:nth-child(1) {
+  /* @apply hidden; */
+  @apply rotate-45;
+  @apply fill-red-600;
 }
 input:checked + div svg:nth-child(2) {
   @apply block;
   @apply text-red-600;
-}
-input:checked + div svg:nth-child(1) {
-  @apply hidden;
 }
 
 .flipY {
