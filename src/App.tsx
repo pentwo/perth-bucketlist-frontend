@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import topbar from 'topbar'
+import { useSnackbar } from 'notistack'
+
 import './App.css'
 import Bucket from './components/Bucket'
 import Filter from './components/Filter'
@@ -38,16 +41,22 @@ const initItem: ItemObj = {
 
 function App() {
   const [cards, setCards] = useState([initItem])
-  const [myList, setMyList]: [number[], Function] = useState([])
   const [filterCards, setFilterCards] = useState<ItemObj[]>([])
   const [filtered, setFiltered] = useState('')
+
+  const [myList, setMyList]: [number[], Function] = useState([])
+  const [myListTitle, setMyListTitle] = useState('My List')
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
   let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
   let OFFSET = 0
 
+  // If URL contain Params = id
   let { id } = useParams<routerParams>()
-
+  // Go to database to read the Saved List by ID
   useEffect(() => {
+    topbar.show()
     if (id) {
       readSavedList(id)
     } else {
@@ -64,52 +73,54 @@ function App() {
     })
   }
 
+  // Reading Saved List by ID
   async function readSavedList(id: string) {
     try {
       const response = await fetch(`${API_ENDPOINT}/${id}`)
       const data = await response.json()
-      // console.log('data: ', data)
-      const { list } = data[0]
 
+      const { list, title } = data[0]
+
+      setMyListTitle(title.replaceAll(`"`, `'`))
       JSON.parse(list).forEach((item: number) => {
         addItemToList(item)
       })
+
+      // TOAST NOTIFICATION
+      enqueueSnackbar('List Loaded!', {
+        variant: 'success'
+      })
     } catch (error) {
       console.error(error)
-    }
-  }
 
-  async function getBucketItems(setLoading: Function) {
-    const response = await fetch(`${API_ENDPOINT}?limit=${QUERY_LIMIT}`)
-    const data = await response.json()
-    const result = [...data]
-
-    if (parseInt(QUERY_LIMIT) < 50) {
-      QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
-    }
-
-    setLoading(false)
-    setCards(result)
-  }
-
-  async function getMoreBucketItems(setLoading: Function) {
-    OFFSET += parseInt(QUERY_LIMIT, 10)
-    const response = await fetch(
-      `${API_ENDPOINT}?limit=${QUERY_LIMIT}&offset=${OFFSET}`
-    )
-    const data = await response.json()
-    const result = [...data]
-
-    if (parseInt(QUERY_LIMIT) < 50) {
-      QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
-    }
-
-    setLoading(false)
-    if (cards.length > 0) {
-      setCards(cards => {
-        return [...cards, ...result]
+      // TOAST NOTIFICATION
+      enqueueSnackbar('Something Went Wrong!', {
+        variant: 'error'
       })
     }
+    topbar.hide()
+  }
+  // Get all the Bucket list items
+  async function getBucketItems(setLoading: Function) {
+    try {
+      const response = await fetch(`${API_ENDPOINT}?limit=${QUERY_LIMIT}`)
+      const data = await response.json()
+      const result = [...data]
+
+      if (parseInt(QUERY_LIMIT) < 50) {
+        QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
+      }
+
+      setLoading(false)
+      setCards(result)
+    } catch (error) {
+      console.error(error)
+      enqueueSnackbar('Something Went Wrong!', {
+        variant: 'error'
+      })
+    }
+
+    topbar.hide()
   }
 
   const handleFilter = (e: React.MouseEvent) => {
@@ -135,10 +146,18 @@ function App() {
         <Hero />
       </header>
       <aside className="row-start-1 row-span-2 grid-cols-1">
-        <Bucket cards={cards} myList={myList} setMyListFunc={setMyList} />
+        <Bucket
+          cards={cards}
+          myListTitle={myListTitle}
+          setMyListTitle={setMyListTitle}
+          myList={myList}
+          setMyListFunc={setMyList}
+        />
       </aside>
       <main className="col-start-2 col-span-4 ">
         <Filter handleFilter={handleFilter} filtered={filtered} />
+
+        {/* IF filter tag pressed, show tag cards only */}
         {filterCards.length > 0 || filtered ? (
           <ListCards
             myList={myList}

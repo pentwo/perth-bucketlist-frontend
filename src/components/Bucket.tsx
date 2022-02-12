@@ -1,32 +1,46 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid'
+import topbar from 'topbar'
+import { useSnackbar } from 'notistack'
 
-import MyListInterface from '../App'
 import { ItemObj } from '../App'
-import { stringify } from 'querystring'
-import { Router } from 'react-router-dom'
 
 const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
-const URL: string = process.env.REACT_APP_URL as string
 
 type Props = {
-  myList: number[]
   cards: Array<ItemObj>
+  myListTitle: string
+  setMyListTitle: Function
+  myList: number[]
   setMyListFunc: Function
 }
 type Payload = {
   id: string
+  title: string
   list: number[]
 }
+topbar.config({
+  barThickness: 5
+})
 
-export default function Bucket({ myList, cards }: Props) {
-  const [title, setTitle] = useState('My List')
+export default function Bucket({
+  myListTitle,
+  setMyListTitle,
+  myList,
+  cards
+}: Props) {
+  // const [title, setTitle] = useState('My List')
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+  let navigate = useNavigate()
 
   async function saveBucketList() {
     const id = nanoid(6)
+    topbar.show()
 
     let payload: Payload = {
       id,
+      title: myListTitle.replaceAll(`'`, `"`),
       list: myList
     }
 
@@ -39,11 +53,21 @@ export default function Bucket({ myList, cards }: Props) {
         }
       })
       const data = await response.json()
-      console.log('data: ', data)
+      navigate(`/${data.id}`)
+      topbar.hide()
 
-      window.location.href = `${URL}${data.id}`
+      // TOAST NOTIFICATION
+      enqueueSnackbar('List Saved!', {
+        variant: 'success'
+      })
     } catch (error) {
       console.error(error)
+      topbar.hide()
+
+      // TOAST NOTIFICATION
+      enqueueSnackbar('Something Went Wrong!', {
+        variant: 'error'
+      })
     }
   }
 
@@ -54,16 +78,15 @@ export default function Bucket({ myList, cards }: Props) {
         <input
           className="w-full mb-2"
           type="text"
-          value={title}
+          value={myListTitle}
           onChange={e => {
-            setTitle(e.currentTarget.value)
+            setMyListTitle(e.currentTarget.value)
           }}
         />
       </div>
-
       {/* Bucket list */}
       <ul className="mb-16 overflow-y-auto">
-        {myList.length > 0 && cards.length > 0 ? (
+        {myList.length > 0 && cards.length > 1 ? (
           myList.map((id: number) => {
             return (
               <li
@@ -78,12 +101,12 @@ export default function Bucket({ myList, cards }: Props) {
           <p>Add item to start...</p>
         )}
       </ul>
-
       {/* buttons */}
       <div className="absolute bottom-4 flex">
         <button
-          className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md"
+          className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
           onClick={saveBucketList}
+          disabled={myList.length === 0}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -101,7 +124,10 @@ export default function Bucket({ myList, cards }: Props) {
           </svg>
           Save
         </button>
-        <button className="flex items-center p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md">
+        <button
+          className="flex items-center p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
+          disabled={myList.length === 0}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 mr-2"
