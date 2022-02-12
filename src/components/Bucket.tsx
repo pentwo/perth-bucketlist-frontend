@@ -1,15 +1,51 @@
 import React, { useState } from 'react'
+import { nanoid } from 'nanoid'
+
 import MyListInterface from '../App'
 import { ItemObj } from '../App'
+import { stringify } from 'querystring'
+import { Router } from 'react-router-dom'
+
+const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
+const URL: string = process.env.REACT_APP_URL as string
 
 type Props = {
   myList: number[]
   cards: Array<ItemObj>
   setMyListFunc: Function
 }
+type Payload = {
+  id: string
+  list: number[]
+}
 
 export default function Bucket({ myList, cards }: Props) {
   const [title, setTitle] = useState('My List')
+
+  async function saveBucketList() {
+    const id = nanoid(6)
+
+    let payload: Payload = {
+      id,
+      list: myList
+    }
+
+    try {
+      const response = await fetch(`${API_ENDPOINT}/${id}`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'content-type': 'application/json;charset=UTF-8'
+        }
+      })
+      const data = await response.json()
+      console.log('data: ', data)
+
+      window.location.href = `${URL}${data.id}`
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   return (
     <div className="sticky top-4 m-4 mb-0 p-2 border-2 shadow-lg h-[calc(100vh-32px)] shadow-blue-100 flex flex-col">
@@ -27,9 +63,7 @@ export default function Bucket({ myList, cards }: Props) {
 
       {/* Bucket list */}
       <ul className="mb-16 overflow-y-auto">
-        {myList.length === 0 ? (
-          <p>Add item to start...</p>
-        ) : (
+        {myList.length > 0 && cards.length > 0 ? (
           myList.map((id: number) => {
             return (
               <li
@@ -40,12 +74,17 @@ export default function Bucket({ myList, cards }: Props) {
               </li>
             )
           })
+        ) : (
+          <p>Add item to start...</p>
         )}
       </ul>
 
       {/* buttons */}
       <div className="absolute bottom-4 flex">
-        <button className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md">
+        <button
+          className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md"
+          onClick={saveBucketList}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 mr-2"
