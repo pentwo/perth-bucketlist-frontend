@@ -23,9 +23,6 @@ function Hero({}: Props) {
               The Bucket List: 50 Things To Do Around Perth Before You Die
             </a>
           </p>
-          {/* <p className="mt-5 sm:mt-10 lg:w-10/12 text-gray-400 font-normal text-center text-sm sm:text-lg">
-            50 Things to do before you die
-          </p> */}
         </div>
       </div>
     </div>
