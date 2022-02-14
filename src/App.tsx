@@ -22,7 +22,6 @@ export type ItemObj = {
   placeImg: string
   location: string
   firstTag: string
-  // imgUrl: string
 }
 type routerParams = {
   id: string
@@ -35,8 +34,6 @@ const initItem: ItemObj = {
   placeImg: '',
   location: '',
   firstTag: ''
-  // done: false,
-  // imgUrl: 'https://picsum.photos/360/360'
 }
 
 function App() {
@@ -141,11 +138,12 @@ function App() {
 
   return (
     // <MyListCtx.Provider value={sampleCtx}>
-    <div className="App grid grid-rows-[200px_1fr] grid-cols-5 content-start">
-      <header className="col-start-2 col-span-4">
+    <div className="App grid grid-cols-1 lg:grid-rows-[200px_1fr] lg:grid-cols-5 content-start">
+      <header className="lg:col-start-2 lg:col-span-4">
         <Hero />
       </header>
-      <aside className="row-start-1 row-span-2 grid-cols-1">
+
+      <aside className="grid   lg:row-start-1 lg:row-span-2 lg:grid-cols-1 mb-4 lg:mb-0">
         <Bucket
           cards={cards}
           myListTitle={myListTitle}
@@ -154,7 +152,7 @@ function App() {
           setMyListFunc={setMyList}
         />
       </aside>
-      <main className="col-start-2 col-span-4 ">
+      <main className="lg:col-start-2 lg:col-span-4 ">
         <Filter handleFilter={handleFilter} filtered={filtered} />
 
         {/* IF filter tag pressed, show tag cards only */}

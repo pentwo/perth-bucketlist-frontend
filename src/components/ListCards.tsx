@@ -33,7 +33,7 @@ const ListCards = ({ getBucketItems, cards, myList, addItemToList }: Props) => {
   return (
     <div className="flex flex-col">
       <div
-        className="container flex flex-wrap justify-center items-start mx-auto my-2 md:my-4"
+        className="container grid sm:flex sm:flex-wrap justify-center items-start mx-auto my-2 md:my-4"
         ref={contentRef}
       >
         {loading

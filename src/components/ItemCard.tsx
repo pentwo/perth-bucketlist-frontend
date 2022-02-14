@@ -21,7 +21,7 @@ const ItemCard = ({ addItemToList, item, done }: CardProps) => {
   }
 
   return (
-    <div className="sm:w-1/2 lg:w-1/3 xl:w-1/4  ">
+    <div className="w-8/12 place-self-center sm:w-1/2 lg:w-1/3 xl:w-1/4  ">
       <PhotoCard
         onHandleFlip={onHandleFlip}
         done={done}
@@ -73,7 +73,7 @@ type PhotoProps = {
 const PhotoCard = ({ onHandleFlip, done, item }: PhotoProps) => {
   return (
     <div
-      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1"
+      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1 hover:-z-10"
       onClick={onHandleFlip}
     >
       {/* Front side */}
