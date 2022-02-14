@@ -77,6 +77,37 @@ export default function Bucket({
     }
   }
 
+  function copyToClipboard() {
+    let bucketListText = ''
+
+    myList.map(
+      id =>
+        (bucketListText += `- ${cards[id - 1].name}
+    `)
+    )
+
+    let text = `Here is my bucket list in Perth
+
+    ${bucketListText}
+
+    Create your own bucket list at ${window.location.href}
+    `
+
+    try {
+      navigator.clipboard.writeText(text)
+
+      // TOAST NOTIFICATION
+      enqueueSnackbar('List Copied to Clipboard!', {
+        variant: 'success'
+      })
+    } catch (error) {
+      // TOAST NOTIFICATION
+      enqueueSnackbar('Something Went Wrong!', {
+        variant: 'error'
+      })
+    }
+  }
+
   return (
     <>
       <button
@@ -101,7 +132,7 @@ export default function Bucket({
           />
         </div>
         {/* Bucket list */}
-        <ul className="mb-16 overflow-y-auto">
+        <ul className="mb-28 overflow-y-auto">
           {myList.length > 0 && cards.length > 1 ? (
             myList.map((id: number) => {
               return (
@@ -118,9 +149,9 @@ export default function Bucket({
           )}
         </ul>
         {/* buttons */}
-        <div className="absolute bottom-4 flex">
+        <div className="absolute bottom-4 flex flex-row sm:flex-col">
           <button
-            className="flex items-center mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
+            className="flex items-center mb-0 mr-2 sm:mb-2 sm:mr-0 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md active:scale-95 disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
             onClick={saveBucketList}
             disabled={myList.length === 0}
           >
@@ -141,8 +172,9 @@ export default function Bucket({
             Save
           </button>
           <button
-            className="flex items-center p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
+            className="flex items-center p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md active:scale-95 disabled:text-slate-400 disabled:bg-slate-200 disabled:hover:shadow-none"
             disabled={myList.length === 0}
+            onClick={copyToClipboard}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +190,7 @@ export default function Bucket({
                 d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
               />
             </svg>
-            Share
+            Copy List
           </button>
         </div>
       </div>
