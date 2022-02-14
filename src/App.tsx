@@ -42,7 +42,7 @@ const initItem: ItemObj = {
 function App() {
   const [cards, setCards] = useState([initItem])
   const [filterCards, setFilterCards] = useState<ItemObj[]>([])
-  const [filtered, setFiltered] = useState('')
+  const [filtered, setFiltered] = useState('all')
 
   const [myList, setMyList]: [number[], Function] = useState([])
   const [myListTitle, setMyListTitle] = useState('My List')
@@ -126,8 +126,8 @@ function App() {
   const handleFilter = (e: React.MouseEvent) => {
     const tag: string = e.currentTarget?.id
 
-    if (tag === '' || filtered === tag) {
-      setFiltered('')
+    if (tag === 'all') {
+      setFiltered('all')
       setFilterCards([])
     } else {
       setFiltered(tag)
@@ -158,7 +158,7 @@ function App() {
         <Filter handleFilter={handleFilter} filtered={filtered} />
 
         {/* IF filter tag pressed, show tag cards only */}
-        {filterCards.length > 0 || filtered ? (
+        {filterCards.length > 0 ? (
           <ListCards
             myList={myList}
             getBucketItems={getBucketItems}
