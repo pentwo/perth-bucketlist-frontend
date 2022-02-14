@@ -21,7 +21,7 @@ const ItemCard = ({ addItemToList, item, done }: CardProps) => {
   }
 
   return (
-    <div className="w-8/12 place-self-center sm:w-1/2 lg:w-1/3 xl:w-1/4  ">
+    <div className="w-8/12 place-self-center sm:place-self-auto sm:w-1/2 lg:w-1/3 xl:w-1/4  ">
       <PhotoCard
         onHandleFlip={onHandleFlip}
         done={done}
@@ -46,7 +46,7 @@ const ItemCard = ({ addItemToList, item, done }: CardProps) => {
           <div className="mx-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-9 w-9 fill-indigo-600 hover:scale-110 transition-all"
+              className="h-9 w-9 fill-indigo-600 hover:scale-110 transition-all active:scale-95"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
