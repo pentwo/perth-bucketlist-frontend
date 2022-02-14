@@ -1,9 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-type Props = {}
-
-function Hero({}: Props) {
+function Hero() {
   return (
     <div className="bg-gradient-to-b from-indigo-200  to-white">
       <div className="container mx-auto flex flex-col items-center py-8 sm:py-18">

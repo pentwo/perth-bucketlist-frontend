@@ -44,10 +44,9 @@ function App() {
   const [myList, setMyList]: [number[], Function] = useState([])
   const [myListTitle, setMyListTitle] = useState('My List')
 
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
 
   let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
-  let OFFSET = 0
 
   // If URL contain Params = id
   let { id } = useParams<routerParams>()
