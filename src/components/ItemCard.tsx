@@ -31,9 +31,9 @@ const ItemCard = ({ addItemToList, item, done }: CardProps) => {
       <div className="p-4">
         <label
           htmlFor={`list-${item.id}`}
-          className="flex flex-row justify-between items-center cursor-pointer"
+          className="flex flex-row justify-between items-center cursor-pointer "
         >
-          <h3 className="font-bold text-gray-700">{item.name}</h3>
+          <h3 className="font-bold text-gray-700 hover:text-indigo-600">{item.name}</h3>
           <input
             id={`list-${item.id}`}
             type="checkbox"
@@ -73,7 +73,8 @@ type PhotoProps = {
 const PhotoCard = ({ onHandleFlip, done, item }: PhotoProps) => {
   return (
     <div
-      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1 hover:-z-10"
+      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1 "
+      // hover:-rotate-1 hover:-z-10
       onClick={onHandleFlip}
     >
       {/* Front side */}
