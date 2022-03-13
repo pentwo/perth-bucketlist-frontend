@@ -9,7 +9,7 @@ function Hero() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-center text-gray-800 font-black leading-7 md:leading-10">
             Perth{' '}
             <Link to="/">
-              <span className="text-indigo-700">Bucket list</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-pink-600 to-indigo-700">Bucket list</span>
             </Link>
           </h1>
           <p className="mt-5 sm:mt-10 lg:w-10/12 text-gray-400 font-normal text-center text-xs">
