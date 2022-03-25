@@ -49,37 +49,42 @@ function App() {
   const { enqueueSnackbar } = useSnackbar()
 
   let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
+  let QUERY_MAX: string = process.env.REACT_APP_LIMIT_MAX as string
 
   // If URL contain Params = id
   let { id } = useParams<routerParams>()
   // Go to database to read the Saved List by ID
   useEffect(() => {
     topbar.show()
+    
     if (id) {
       readSavedList(id)
-    } else {
-    }
+    } 
   }, [])
-
 
   // Watch myList length to invoke Toast NOTIFICATION
   useEffect(()=>{
     if(myList.length===0 && prevMyList.length===0) return
+    // only when manual adding/removing list item will show notification
+    let difference = myList.length - prevMyList.length
 
-    if(myList.length > prevMyList.length) {
+    if(difference === 1) {
       // TOAST NOTIFICATION
       enqueueSnackbar('Added to the list!', {
         variant: 'success'
       })
-    } else {
+    } 
+    if(difference === -1) {
       // // TOAST NOTIFICATION
       enqueueSnackbar('Removed from the list!', {
         variant: 'warning'
       })
     }
-
+    
+    
   },[myList.length])
 
+  // Add only one item
   function addItemToList(id: number) {
     setMyList((myList: number[]) => {
       if (!myList.includes(id)) {
@@ -89,6 +94,13 @@ function App() {
         // remove item from myList
         return myList.filter(item => item !== id)
       }
+    })
+  }
+  // Add list of items
+  function addItemsToList(id: number[]) {
+    setMyList((myList: number[]) => {
+        // added to myList
+        return [...myList, ...id]
     })
   }
 
@@ -101,9 +113,11 @@ function App() {
       const { list, title } = data[0]
       
       setMyListTitle(title.replaceAll(`"`, `'`))
-      JSON.parse(list).forEach((item: number) => {
-        addItemToList(item)
-      })
+
+      addItemsToList(JSON.parse(list))
+      // JSON.parse(list).forEach((item: number) => {
+      //   addItemToList(item)
+      // })
 
       // TOAST NOTIFICATION
       enqueueSnackbar('List Loaded!', {
@@ -119,19 +133,22 @@ function App() {
     }
     topbar.hide()
   }
+
+
   // Get all the Bucket list items
-  async function getBucketItems(setLoading: Function) {
+  async function getBucketItems(setLoading: Function, limit: string) {
     try {
-      const response = await fetch(`${API_ENDPOINT}?limit=${QUERY_LIMIT}`)
+      if(id) {
+        limit = QUERY_MAX
+      }
+
+      const response = await fetch(`${API_ENDPOINT}?limit=${limit}`)
       const data = await response.json()
       const result = [...data]
 
-      if (parseInt(QUERY_LIMIT) < 50) {
-        QUERY_LIMIT = (parseInt(QUERY_LIMIT) + 3).toString()
-      }
-
       setLoading(false)
       setCards(result)
+
     } catch (error) {
       console.error(error)
       enqueueSnackbar('Something Went Wrong!', {

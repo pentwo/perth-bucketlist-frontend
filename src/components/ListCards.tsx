@@ -4,26 +4,31 @@ import { isBottom } from '../utility/tools'
 import { ItemObj } from '../App'
 
 type Props = {
-  getBucketItems: (setLoading: Function) => Promise<void>
+  getBucketItems: (setLoading: Function, limit: string) => Promise<void>
   cards: Array<ItemObj>
-  myList: Number[]
+  myList: number[]
   addItemToList: (id: number) => void
 }
 
 const ListCards = ({ getBucketItems, cards, myList, addItemToList }: Props) => {
   const [loading, setLoading] = useState(true)
   const contentRef = useRef<HTMLDivElement>(null)
+  let queryLimit = useRef(process.env.REACT_APP_LIMIT as string) 
+  let QUERY_MAX: string = process.env.REACT_APP_LIMIT_MAX as string
 
   // initial fetching data
   useEffect(() => {
-    getBucketItems(setLoading)
-  }, [])
+    getBucketItems(setLoading, queryLimit.current)
+  }, [myList])
 
-  // infinate scrolling
+  // infinite scrolling
   useEffect(() => {
     const onScroll = () => {
       if (isBottom(contentRef)) {
-        getBucketItems(setLoading)
+        if (parseInt(queryLimit.current) < 50) {
+          queryLimit.current = (parseInt(queryLimit.current) + 3).toString()
+        }
+        getBucketItems(setLoading, queryLimit.current)
       }
     }
     document.addEventListener('scroll', onScroll)
