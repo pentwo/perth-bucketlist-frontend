@@ -8,6 +8,7 @@ import Bucket from './components/Bucket'
 import Filter from './components/Filter'
 import Hero from './components/Hero'
 import ListCards from './components/ListCards'
+import usePrevious from './utility/usePrevious'
 
 const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
 
@@ -43,6 +44,7 @@ function App() {
 
   const [myList, setMyList]: [number[], Function] = useState([])
   const [myListTitle, setMyListTitle] = useState('My List')
+  const prevMyList: number[] = usePrevious(myList)
 
   const { enqueueSnackbar } = useSnackbar()
 
@@ -59,11 +61,32 @@ function App() {
     }
   }, [])
 
+
+  // Watch myList length to invoke Toast NOTIFICATION
+  useEffect(()=>{
+    if(myList.length===0 && prevMyList.length===0) return
+
+    if(myList.length > prevMyList.length) {
+      // TOAST NOTIFICATION
+      enqueueSnackbar('Added to the list!', {
+        variant: 'success'
+      })
+    } else {
+      // // TOAST NOTIFICATION
+      enqueueSnackbar('Removed from the list!', {
+        variant: 'warning'
+      })
+    }
+
+  },[myList.length])
+
   function addItemToList(id: number) {
     setMyList((myList: number[]) => {
       if (!myList.includes(id)) {
+        // added to myList
         return [...myList, id]
       } else {
+        // remove item from myList
         return myList.filter(item => item !== id)
       }
     })
@@ -76,7 +99,7 @@ function App() {
       const data = await response.json()
 
       const { list, title } = data[0]
-
+      
       setMyListTitle(title.replaceAll(`"`, `'`))
       JSON.parse(list).forEach((item: number) => {
         addItemToList(item)
@@ -137,12 +160,12 @@ function App() {
 
   return (
     // <MyListCtx.Provider value={sampleCtx}>
-    <div className="App grid grid-cols-1 lg:grid-rows-[200px_1fr] lg:grid-cols-5 content-start">
+    <div className="App overflow-hidden grid grid-cols-1 lg:grid-rows-[200px_1fr] lg:grid-cols-5 content-start">
       <header className="lg:col-start-2 lg:col-span-4">
         <Hero />
       </header>
 
-      <aside className="grid   lg:row-start-1 lg:row-span-2 lg:grid-cols-1 mb-4 lg:mb-0">
+      <aside className="grid lg:row-start-1 lg:row-span-2 lg:grid-cols-1 mb-4 lg:mb-0">
         <Bucket
           cards={cards}
           myListTitle={myListTitle}
