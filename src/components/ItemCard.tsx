@@ -1,3 +1,4 @@
+import { useSnackbar } from 'notistack'
 import React from 'react'
 
 import { ItemObj } from '../App'
@@ -73,7 +74,7 @@ type PhotoProps = {
 const PhotoCard = ({ onHandleFlip, done, item }: PhotoProps) => {
   return (
     <div
-      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1 "
+      className="photo-card relative h-96 flex transition-all duration-200 active:bg-gray-100 m-2 cursor-pointer hover:-rotate-1"
       // hover:-rotate-1 hover:-z-10
       onClick={onHandleFlip}
     >
