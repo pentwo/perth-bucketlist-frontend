@@ -30,7 +30,7 @@ export default function Bucket({
   myList,
   cards
 }: Props) {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar()
   let navigate = useNavigate()
   const listEl = useRef<HTMLDivElement>(null)
 
@@ -114,7 +114,7 @@ export default function Bucket({
         className="place-self-center flex lg:hidden mr-2 p-2 rounded-md transition-colors hover:text-slate-200 hover:bg-indigo-600 bg-slate-200 text-indigo-600 hover:shadow-md"
         onClick={toggleHiddenListEl}
       >
-        📝 Show List
+        📝 Show List ({myList.length})
       </button>
       <div
         className="hidden sticky lg:flex flex-col top-4 m-4 mb-0 p-2 border-2 shadow-lg lg:h-[calc(100vh-32px)] shadow-blue-100"
