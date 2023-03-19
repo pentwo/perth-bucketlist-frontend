@@ -1,179 +1,186 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import topbar from 'topbar'
-import { useSnackbar } from 'notistack'
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import topbar from "topbar";
+import { useSnackbar } from "notistack";
 
-import './App.css'
-import Bucket from './components/Bucket'
-import Filter from './components/Filter'
-import Hero from './components/Hero'
-import ListCards from './components/ListCards'
-import usePrevious from './utility/usePrevious'
+import "./App.css";
+import Bucket from "./components/Bucket";
+import Filter from "./components/Filter";
+import Hero from "./components/Hero";
+import ListCards from "./components/ListCards";
+import usePrevious from "./utility/usePrevious";
 
-const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
+import { bucketlist } from "./data/bucketlist";
+
+const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string;
 
 export interface MyListInterface {
-  myList: number[]
-  setMyList: Function
+  myList: number[];
+  setMyList: Function;
 }
 export type ItemObj = {
-  id: number
-  name: string
-  description: string
-  placeImg: string
-  location: string
-  firstTag: string
-}
+  id: number;
+  name: string;
+  description: string;
+  placeImg: string;
+  location: string;
+  firstTag: string;
+};
 type routerParams = {
-  id: string
-}
+  id: string;
+};
 
 const initItem: ItemObj = {
   id: 0,
-  name: '',
-  description: '',
-  placeImg: '',
-  location: '',
-  firstTag: ''
-}
+  name: "",
+  description: "",
+  placeImg: "",
+  location: "",
+  firstTag: "",
+};
 
 function App() {
-  const [cards, setCards] = useState([initItem])
-  const [filterCards, setFilterCards] = useState<ItemObj[]>([])
-  const [filtered, setFiltered] = useState('all')
+  const [cards, setCards] = useState([initItem]);
+  const [filterCards, setFilterCards] = useState<ItemObj[]>([]);
+  const [filtered, setFiltered] = useState("all");
 
-  const [myList, setMyList]: [number[], Function] = useState([])
-  const [myListTitle, setMyListTitle] = useState('My List')
-  const prevMyList: number[] = usePrevious(myList)
+  const [myList, setMyList]: [number[], Function] = useState([]);
+  const [myListTitle, setMyListTitle] = useState("My List");
+  const prevMyList: number[] = usePrevious(myList);
 
-  const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar();
 
-  let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string
-  let QUERY_MAX: string = process.env.REACT_APP_LIMIT_MAX as string
+  let QUERY_LIMIT: string = process.env.REACT_APP_LIMIT as string;
+  let QUERY_MAX: string = process.env.REACT_APP_LIMIT_MAX as string;
 
   // If URL contain Params = id
-  let { id } = useParams<routerParams>()
+  let { id } = useParams<routerParams>();
   // Go to database to read the Saved List by ID
   useEffect(() => {
-    topbar.show()
-    
+    topbar.show();
+
     if (id) {
-      readSavedList(id)
-    } 
-  }, [])
+      readSavedList(id);
+    }
+
+    const savedList = window.localStorage.getItem("myList");
+    if (savedList) {
+      const { list, title } = JSON.parse(savedList);
+      setMyListTitle(title.replaceAll(`"`, `'`));
+      addItemsToList(list);
+    }
+  }, []);
 
   // Watch myList length to invoke Toast NOTIFICATION
-  useEffect(()=>{
-    if(myList.length===0 && prevMyList.length===0) return
+  useEffect(() => {
+    if (myList.length === 0 && prevMyList.length === 0) return;
     // only when manual adding/removing list item will show notification
-    let difference = myList.length - prevMyList.length
+    let difference = myList.length - prevMyList.length;
 
-    if(difference === 1) {
+    if (difference === 1) {
       // TOAST NOTIFICATION
-      enqueueSnackbar('Added to the list!', {
-        variant: 'success'
-      })
-    } 
-    if(difference === -1) {
-      // // TOAST NOTIFICATION
-      enqueueSnackbar('Removed from the list!', {
-        variant: 'warning'
-      })
+      enqueueSnackbar("Added to the list!", {
+        variant: "success",
+      });
     }
-    
-    
-  },[myList.length])
+    if (difference === -1) {
+      // // TOAST NOTIFICATION
+      enqueueSnackbar("Removed from the list!", {
+        variant: "warning",
+      });
+    }
+  }, [myList.length]);
 
   // Add only one item
   function addItemToList(id: number) {
     setMyList((myList: number[]) => {
       if (!myList.includes(id)) {
         // added to myList
-        return [...myList, id]
+        return [...myList, id];
       } else {
         // remove item from myList
-        return myList.filter(item => item !== id)
+        return myList.filter((item) => item !== id);
       }
-    })
+    });
   }
   // Add list of items
   function addItemsToList(id: number[]) {
     setMyList((myList: number[]) => {
-        // added to myList
-        return [...myList, ...id]
-    })
+      // added to myList
+      return [...myList, ...id];
+    });
   }
 
   // Reading Saved List by ID
   async function readSavedList(id: string) {
     try {
-      const response = await fetch(`${API_ENDPOINT}/${id}`)
-      const data = await response.json()
+      const response = await fetch(`${API_ENDPOINT}/${id}`);
+      const data = await response.json();
 
-      const { list, title } = data[0]
-      
-      setMyListTitle(title.replaceAll(`"`, `'`))
+      const { list, title } = data[0];
 
-      addItemsToList(JSON.parse(list))
+      setMyListTitle(title.replaceAll(`"`, `'`));
+
+      addItemsToList(JSON.parse(list));
       // JSON.parse(list).forEach((item: number) => {
       //   addItemToList(item)
       // })
 
       // TOAST NOTIFICATION
-      enqueueSnackbar('List Loaded!', {
-        variant: 'success'
-      })
+      enqueueSnackbar("List Loaded!", {
+        variant: "success",
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
 
       // TOAST NOTIFICATION
-      enqueueSnackbar('Something Went Wrong!', {
-        variant: 'error'
-      })
+      enqueueSnackbar("Something Went Wrong!", {
+        variant: "error",
+      });
     }
-    topbar.hide()
+    topbar.hide();
   }
-
 
   // Get all the Bucket list items
   async function getBucketItems(setLoading: Function, limit: string) {
     try {
-      if(id) {
-        limit = QUERY_MAX
+      if (id) {
+        limit = QUERY_MAX;
       }
 
-      const response = await fetch(`${API_ENDPOINT}?limit=${limit}`)
-      const data = await response.json()
-      const result = [...data]
+      //   const response = await fetch(`${API_ENDPOINT}?limit=${limit}`);
 
-      setLoading(false)
-      setCards(result)
+      //   const data = await response.json();
 
+      const result = [...bucketlist];
+
+      setLoading(false);
+      setCards(result);
     } catch (error) {
-      console.error(error)
-      enqueueSnackbar('Something Went Wrong!', {
-        variant: 'error'
-      })
+      console.error(error);
+      enqueueSnackbar("Something Went Wrong!", {
+        variant: "error",
+      });
     }
 
-    topbar.hide()
+    topbar.hide();
   }
 
   const handleFilter = (e: React.MouseEvent) => {
-    const tag: string = e.currentTarget?.id
+    const tag: string = e.currentTarget?.id;
 
-    if (tag === 'all') {
-      setFiltered('all')
-      setFilterCards([])
+    if (tag === "all") {
+      setFiltered("all");
+      setFilterCards([]);
     } else {
-      setFiltered(tag)
+      setFiltered(tag);
 
-      const result = cards.filter(card => {
-        return card.firstTag === tag
-      })
-      setFilterCards([...result])
+      const result = cards.filter((card) => {
+        return card.firstTag === tag;
+      });
+      setFilterCards([...result]);
     }
-  }
+  };
 
   return (
     // <MyListCtx.Provider value={sampleCtx}>
@@ -213,7 +220,7 @@ function App() {
       </main>
     </div>
     // </MyListCtx.Provider>
-  )
+  );
 }
 
-export default App
+export default App;

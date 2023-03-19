@@ -1,110 +1,111 @@
-import React, { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { nanoid } from 'nanoid'
-import topbar from 'topbar'
-import { useSnackbar } from 'notistack'
+import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { nanoid } from "nanoid";
+import topbar from "topbar";
+import { useSnackbar } from "notistack";
 
-import { ItemObj } from '../App'
+import { ItemObj } from "../App";
 
-const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string
+const API_ENDPOINT: string = process.env.REACT_APP_API_ENDPOINT as string;
 
 type Props = {
-  cards: Array<ItemObj>
-  myListTitle: string
-  setMyListTitle: Function
-  myList: number[]
-  setMyListFunc: Function
-}
+  cards: Array<ItemObj>;
+  myListTitle: string;
+  setMyListTitle: Function;
+  myList: number[];
+  setMyListFunc: Function;
+};
 type Payload = {
-  id: string
-  title: string
-  list: number[]
-}
+  id: string;
+  title: string;
+  list: number[];
+};
 topbar.config({
-  barThickness: 5
-})
+  barThickness: 5,
+});
 
 export default function Bucket({
   myListTitle,
   setMyListTitle,
   myList,
-  cards
+  cards,
 }: Props) {
-  const { enqueueSnackbar } = useSnackbar()
-  let navigate = useNavigate()
-  const listEl = useRef<HTMLDivElement>(null)
+  const { enqueueSnackbar } = useSnackbar();
+  let navigate = useNavigate();
+  const listEl = useRef<HTMLDivElement>(null);
 
   async function saveBucketList() {
-    const id = nanoid(6)
-    topbar.show()
+    const id = nanoid(6);
+    topbar.show();
 
     let payload: Payload = {
       id,
       title: myListTitle.replaceAll(`'`, `"`),
-      list: myList
-    }
+      list: myList,
+    };
 
     try {
-      const response = await fetch(`${API_ENDPOINT}/${id}`, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: {
-          'content-type': 'application/json;charset=UTF-8'
-        }
-      })
-      const data = await response.json()
-      navigate(`/${data.id}`)
-      topbar.hide()
+      window.localStorage.setItem("myList", JSON.stringify(payload));
+      //   const response = await fetch(`${API_ENDPOINT}/${id}`, {
+      //     method: 'POST',
+      //     body: JSON.stringify(payload),
+      //     headers: {
+      //       'content-type': 'application/json;charset=UTF-8'
+      //     }
+      //   })
+      //   const data = await response.json()
+      //   navigate(`/${data.id}`)
+      topbar.hide();
 
       // TOAST NOTIFICATION
-      enqueueSnackbar('List Saved!', {
-        variant: 'success'
-      })
+      enqueueSnackbar("List Saved!", {
+        variant: "success",
+      });
     } catch (error) {
-      console.error(error)
-      topbar.hide()
+      console.error(error);
+      topbar.hide();
 
       // TOAST NOTIFICATION
-      enqueueSnackbar('Something Went Wrong!', {
-        variant: 'error'
-      })
+      enqueueSnackbar("Something Went Wrong!", {
+        variant: "error",
+      });
     }
   }
 
   function toggleHiddenListEl() {
     if (listEl.current) {
-      listEl.current.classList.toggle('hidden')
+      listEl.current.classList.toggle("hidden");
     }
   }
 
   function copyToClipboard() {
-    let bucketListText = ''
+    let bucketListText = "";
 
     myList.map(
-      id =>
+      (id) =>
         (bucketListText += `- ${cards[id - 1].name}
     `)
-    )
+    );
 
     let text = `Here is my bucket list in Perth
 
     ${bucketListText}
 
     Create your own bucket list at ${window.location.href}
-    `
+    `;
 
     try {
-      navigator.clipboard.writeText(text)
+      navigator.clipboard.writeText(text);
 
       // TOAST NOTIFICATION
-      enqueueSnackbar('List Copied to Clipboard!', {
-        variant: 'success'
-      })
+      enqueueSnackbar("List Copied to Clipboard!", {
+        variant: "success",
+      });
     } catch (error) {
       // TOAST NOTIFICATION
-      enqueueSnackbar('Something Went Wrong!', {
-        variant: 'error'
-      })
+      enqueueSnackbar("Something Went Wrong!", {
+        variant: "error",
+      });
     }
   }
 
@@ -126,8 +127,8 @@ export default function Bucket({
             className="w-full mb-2"
             type="text"
             value={myListTitle}
-            onChange={e => {
-              setMyListTitle(e.currentTarget.value)
+            onChange={(e) => {
+              setMyListTitle(e.currentTarget.value);
             }}
           />
         </div>
@@ -142,7 +143,7 @@ export default function Bucket({
                 >
                   {cards[id - 1].name}
                 </li>
-              )
+              );
             })
           ) : (
             <p>Add item to start...</p>
@@ -195,5 +196,5 @@ export default function Bucket({
         </div>
       </div>
     </>
-  )
+  );
 }
